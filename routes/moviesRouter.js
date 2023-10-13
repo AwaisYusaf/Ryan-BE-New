@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const moviesControllers_1 = require("../controllers/moviesControllers");
+const moviesRouter = (0, express_1.Router)();
+moviesRouter.route("/").get(moviesControllers_1.GetMovies).post(moviesControllers_1.AddMovie).put(moviesControllers_1.EditMovie);
+moviesRouter.route("/:id").get(moviesControllers_1.GetMovieByID).delete(moviesControllers_1.DeleteMovie);
+moviesRouter.route("/download-csv").get(moviesControllers_1.PrepareCSV);
+moviesRouter.route("/download-txt").get(moviesControllers_1.PrepareTXT);
+exports.default = moviesRouter;
