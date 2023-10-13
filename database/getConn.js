@@ -8,16 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.sequelize = exports.Sequelize = void 0;
-const dotenv_1 = __importDefault(require("dotenv"));
-const sequelize_1 = require("sequelize");
-Object.defineProperty(exports, "Sequelize", { enumerable: true, get: function () { return sequelize_1.Sequelize; } });
-dotenv_1.default.config();
-const sequelize = new sequelize_1.Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_USERNAME, process.env.DATABASE_PASSWORD, {
+const mysql = require('mysql2');
+const { Sequelize } = require('sequelize');
+//@ts-ignore
+let sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_USERNAME, process.env.DATABASE_PASSWORD, {
     dialect: 'mysql',
     host: process.env.DATABASE_HOST,
     dialectOptions: {
@@ -26,7 +20,6 @@ const sequelize = new sequelize_1.Sequelize(process.env.DATABASE_NAME, process.e
         }
     }
 });
-exports.sequelize = sequelize;
 (() => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield sequelize.authenticate();
@@ -36,3 +29,4 @@ exports.sequelize = sequelize;
         console.log('database connection failed');
     }
 }))();
+module.exports = { Sequelize, sequelize };

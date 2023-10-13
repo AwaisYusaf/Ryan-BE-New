@@ -8,21 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeleteMovie = exports.EditMovie = exports.PrepareTXT = exports.PrepareCSV = exports.AddMovie = exports.GetMovies = exports.GetMovieByID = void 0;
-const sequelize_1 = require("sequelize");
-const getConn_1 = require("../database/getConn");
-const sequelize_2 = require("sequelize");
-const fs_1 = __importDefault(require("fs"));
-const Movie = getConn_1.sequelize.define('Movie', {
-    name: sequelize_1.DataTypes.STRING,
-    duration: sequelize_1.DataTypes.STRING,
-    rating: sequelize_1.DataTypes.STRING,
+const { DataTypes } = require("sequelize");
+//@ts-ignore
+const { sequelize } = require("../database/getConn");
+const { Op } = require("sequelize");
+const fs = require("fs");
+const Movie = sequelize.define('Movie', {
+    name: DataTypes.STRING,
+    duration: DataTypes.STRING,
+    rating: DataTypes.STRING,
 });
-getConn_1.sequelize.sync();
+sequelize.sync();
 function GetMovieByID(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
@@ -35,7 +31,6 @@ function GetMovieByID(req, res) {
         }
     });
 }
-exports.GetMovieByID = GetMovieByID;
 function sortByNameAscending(arr) {
     arr.sort((a, b) => {
         if (a.name.toLowerCase()[0] > b.name.toLowerCase()[0]) {
@@ -94,7 +89,7 @@ function GetMovies(req, res) {
                 const movies = yield Movie.findAll({
                     where: {
                         name: {
-                            [sequelize_2.Op.like]: `%${q}%`
+                            [Op.like]: `%${q}%`
                         }
                     }
                 });
@@ -133,7 +128,6 @@ function GetMovies(req, res) {
         }
     });
 }
-exports.GetMovies = GetMovies;
 function AddMovie(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { name, duration, rating } = req.body;
@@ -146,7 +140,6 @@ function AddMovie(req, res) {
         }
     });
 }
-exports.AddMovie = AddMovie;
 function PrepareCSV(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const movies = yield Movie.findAll();
@@ -158,7 +151,7 @@ function PrepareCSV(req, res) {
             csvContent += `${row.id}, ${row.name}, ${row.duration}, ${row.rating}\n`;
         });
         // Create a CSV file
-        fs_1.default.writeFileSync('data.csv', csvContent);
+        fs.writeFileSync('data.csv', csvContent);
         // Serve the file for download
         return res.download('data.csv', 'data.csv', (err) => {
             if (err) {
@@ -167,7 +160,6 @@ function PrepareCSV(req, res) {
         });
     });
 }
-exports.PrepareCSV = PrepareCSV;
 function PrepareTXT(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const movies = yield Movie.findAll();
@@ -179,7 +171,7 @@ function PrepareTXT(req, res) {
             csvContent += `${row.id}, ${row.name}, ${row.duration}, ${row.rating}\n`;
         });
         // Create a CSV file
-        fs_1.default.writeFileSync('data.txt', csvContent);
+        fs.writeFileSync('data.txt', csvContent);
         // Serve the file for download
         return res.download('data.txt', 'data.txt', (err) => {
             if (err) {
@@ -188,7 +180,6 @@ function PrepareTXT(req, res) {
         });
     });
 }
-exports.PrepareTXT = PrepareTXT;
 function EditMovie(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id, movie } = req.body;
@@ -201,7 +192,6 @@ function EditMovie(req, res) {
         }
     });
 }
-exports.EditMovie = EditMovie;
 function DeleteMovie(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
@@ -214,4 +204,4 @@ function DeleteMovie(req, res) {
         }
     });
 }
-exports.DeleteMovie = DeleteMovie;
+module.exports = { GetMovies, AddMovie, EditMovie, DeleteMovie, PrepareCSV, PrepareTXT, GetMovieByID };
